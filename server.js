@@ -3,21 +3,21 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const flash = require('connect-flash')
 const config = require('config')
-const basicAuth = require('basic-auth')
+// const basicAuth = require('basic-auth')
 require('date-utils')
 const { MongoClient } = require('mongodb')
 
 ;(async ()=>{
   const app = express()
-  app.use((request,response,next)=>{
-    const user = basicAuth(request);
-    admins = {[config.basic.user]: { password: config.basic.pass }}
-    if (!user || !admins[user.name] || admins[user.name].password !== user.pass) {
-      response.set('WWW-Authenticate', 'Basic realm="MY OWN PAGE"');
-      return response.status(401).send();
-    }
-    return next();
-  })
+  // app.use((request,response,next)=>{
+  //   const user = basicAuth(request);
+  //   admins = {[config.basic.user]: { password: config.basic.pass }}
+  //   if (!user || !admins[user.name] || admins[user.name].password !== user.pass) {
+  //     response.set('WWW-Authenticate', 'Basic realm="MY OWN PAGE"');
+  //     return response.status(401).send();
+  //   }
+  //   return next();
+  // })
   app.use(express.json())
   app.use(express.urlencoded({ extended: false }))
   app.use(cookieParser())
