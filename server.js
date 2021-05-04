@@ -42,7 +42,7 @@ const { MongoClient } = require('mongodb')
     ).connect()
     .then(async mongoClient => mongoClient.db(config.mongo_dbname).collection('all'))
 
-  const moauth = new (require('../MOauth').server)({
+  const moauth = new (require('moauth').server)({
     mongo_collection,
     hash_salt: config.HASHSALT,
     user_signin_server_path: '/signin/',
