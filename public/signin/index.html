@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <title>Signin - maruyu.work</title>
+  <script type="module" src="/components/messagebox.js"></script>
+  <script type="module" src="/components/header.js"></script>
+</head>
+
+<body>
+  <message-box></message-box>
+  <header-element></header-element>
+  <div class="row justify-content-center" style="height:auto">
+    <div class="login-form col-11 col-sm-10 col-md-9 col-lg-8 col-xl-6 col-xxl-3 mt-2">
+      <h1>Signin</h1>
+      <div class="card">
+        <div class="card-body">
+          <form>
+            <div class="mb-2">
+              <label for="user_id" class="form-label">UserID</label>
+              <input type="text" id="user_id" class="form-control form-control-lg" name="user_id" required autofocus>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" id="password" class="form-control form-control-lg" name="password"
+                aria-describedby="passwordHelpBlock" autocomplete="current-password" required>
+            </div>
+
+            <div class="d-grid mx-auto">
+              <button class="btn btn-primary btn-lg" id='submit'>Signin</button>
+              <p class="mt-3">if you do not have an account, please create an account from <a href='/signup'>here</a>.</p>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type='module'>
+    import { post, showmessage, extract } from '/js/utils.js'
+    document.getElementById('submit').addEventListener('click',ev=>{
+      ev.preventDefault()
+      const queries = Array.from((new URL(window.location.href)).searchParams.entries())
+                        .map(([key,value])=>({[key]:value}))
+                        .reduce((left,right)=>Object.assign(left, right), {})
+      const user_id = document.getElementById('user_id').value
+      const password = document.getElementById('password').value
+      post('/api/get_access_token', {...queries, user_id, password})
+        .then(packet=>{
+          const {title, message, redirect_uri, access_token} = packet.json()
+          const url = new URL(redirect_uri)
+          if(access_token) url.searchParams.append('access_token', access_token)
+          showmessage({title,message,color:'info'}).then(mb=>mb.redirect({uri:url.href,seconds:5}))
+        })
+        .catch(packet=>{
+          console.error(packet)
+          const {title, message} = packet.json()
+          showmessage({title, message, color:'warning'})
+        })
+      })
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

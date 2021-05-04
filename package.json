@@ -1,0 +1,27 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "deploy": "NODE_ENV=production node server.js",
+    "dev": "NODE_ENV=development nodemon --trace-warnings -L --ignore 'public/*' server.js",
+    "forever": "NODE_ENV=production forever start --minUptime 60000 --spinSleepTime 20000 --uid auth -a server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "basic-auth": "^2.0.1",
+    "body-parser": "^1.19.0",
+    "config": "^3.3.6",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.5",
+    "date-utils": "^1.2.21",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "mongodb": "^3.6.6",
+    "node-fetch": "^2.6.1",
+    "nodemon": "^2.0.7"
+  }
+}
