@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <title>Waiting - maruyu.work</title>
+</head>
+
+<body>
+  <message-box></message-box>
+  <header-element signin='required'></header-element>
+  <div class="row justify-content-center" style="height:auto">
+    <div class="login-form col-12 col-sm-11 col-md-11 col-lg-11 col-xl-11 col-xxl-11 mt-3">
+      <h1>Logs</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:200dp">DateTime</th>
+            <th>IP</th>
+            <th>user_id</th>
+            <th style="width:80%">url</th>
+            <th>app_token</th>
+            <th>redirect_uri</th>
+          </tr>
+        </thead>
+        <tbody id='logs'>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script type='module'>
+    import { get, post, showmessage } from '/js/utils.js'
+    function ce({tag, text, appendto, attributes}){
+      const elm = document.createElement(tag)
+      if(text) elm.innerText = text
+      if(attributes)
+        for(let [k,v] of Object.entries(attributes)) elm.setAttribute(k,v)
+      if(appendto) appendto.appendChild(elm)
+      return elm
+    }
+    function createRow({log_at, ip, app_token, user_id, url, redirect_uri}){
+      const tr = ce({tag:'tr'})
+      ce({tag:'th', text:log_at, attributes:{scope:'row'}, appendto:tr})
+      ce({tag:'td', text:ip, appendto:tr})
+      ce({tag:'td', text:user_id, appendto:tr})
+      ce({tag:'td', text:url, appendto:tr, attributes:{style:'word-break:break-all'}})
+      ce({tag:'td', text:app_token, appendto:tr, attributes:{style:'word-break:break-all'}})
+      ce({tag:'td', text:redirect_uri, appendto:tr, attributes:{style:'word-break:break-all'}})
+      const td = ce({tag:'td', appendto:tr})
+      return tr
+    }
+    function addRows({bodyid, rows}){
+      const tbody = document.getElementById(bodyid)
+      for(let row of rows) tbody.appendChild(row)
+    }
+    function refleshRows(bodyid){document.getElementById(bodyid).innerHTML=''}
+    get('/api/get_logs').then(packet=>{
+      console.log(packet.json())
+      if(packet.json().title!="Logs") throw Error("undefined exception")
+      const logsrow = [];
+      const { logs } = packet.json().details
+      for(let log of logs){
+        const {log_at, ip, app_token, user_id, url, redirect_uri} = log
+        logsrow.push(createRow({log_at, ip, app_token, user_id, url, redirect_uri}))
+      }
+      refleshRows('logs')
+      addRows({bodyid:'logs', rows:logsrow})
+    }).catch(packet=>{
+      console.error(packet)
+      const {title, message} = packet.json()
+      showmessage({title, message, color:'warning'})
+    })
+  </script>
+  <script type="module" src="/components/messagebox.js"></script>
+  <script type="module" src="/components/header.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -51,11 +51,19 @@ const { MongoClient } = require('mongodb')
   })
 
   // START ROUTING //
-  app.use((request,response,next)=>{console.log('[LOG]',{'method':request.method,'url':request.url,'body':request.body,'query':request.query});next()})
-
-  app.use('/waiting/', moauth.require_signin)
-  app.use('/waiting/', express.static('public/waiting/'))
+  app.use((request,response,next)=>{
+    console.log('[LOG]',{
+      'method':request.method,
+      'url':request.url,
+      'body':request.body,
+      'query':request.query
+    });
+    next();
+  })
+  app.use(moauth.record_log)
+  app.use('/waiting/', moauth.require_signin, express.static('public/waiting/'))
   app.use('/app_register/', moauth.require_signin, express.static('public/app_register/'))
+  app.use('/logs', moauth.require_signin, express.static('public/logs/'))
 
   app.use('/signin/', moauth.redirect_to_added_app_token_uri, express.static('public/signin/'))
   app.use(express.static('public'))
@@ -68,6 +76,8 @@ const { MongoClient } = require('mongodb')
   app.post('/api/app_register', moauth.require_signin, moauth.app_register)
   app.get('/api/get_waitings', moauth.require_signin, moauth.get_waitings)
   app.post('/api/review_waiting', moauth.require_signin, moauth.review_waiting)
+
+  app.get('/api/get_logs', moauth.require_signin, moauth.get_logs)
 
   app.listen(config.serveport, function () {
     console.log(`server starting -> [port] ${config.serveport} [env] ${process.env.NODE_ENV}`)

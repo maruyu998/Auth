@@ -55,7 +55,7 @@
           const {title, message, redirect_uri, access_token} = packet.json()
           const url = new URL(redirect_uri)
           if(access_token) url.searchParams.append('access_token', access_token)
-          showmessage({title,message,color:'info'}).then(mb=>mb.redirect({uri:url.href,seconds:5}))
+          showmessage({title,message,color:'info'}).then(mb=>mb.redirect({uri:url.href,seconds:0}))
         })
         .catch(packet=>{
           console.error(packet)
