@@ -4,8 +4,8 @@ nohup.out
 .env
 _dist
 
-old/
-old2/
+_old/
+_old2/
 
 client/public/main.js
 
