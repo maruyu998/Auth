@@ -5,6 +5,7 @@ nohup.out
 _dist
 
 old/
+old2/
 
 client/public/main.js
 
